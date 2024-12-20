@@ -7,10 +7,16 @@ const auth = require("../middleware/auth");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log(
+      "Setting file destination to 'uploads/' for file:",
+      file.originalname
+    );
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const filename = Date.now() + path.extname(file.originalname);
+    console.log("Setting file name to:", filename);
+    cb(null, filename);
   },
 });
 
@@ -24,8 +30,10 @@ const upload = multer({
     );
     const mimetype = allowedTypes.test(file.mimetype);
     if (extname && mimetype) {
+      console.log("File type is valid:", file.originalname);
       cb(null, true);
     } else {
+      console.error("Invalid file type:", file.originalname);
       cb(new Error("Only image files are allowed!"));
     }
   },
@@ -33,7 +41,9 @@ const upload = multer({
 
 router.get("/", async (req, res) => {
   try {
+    console.log("Fetching all memes...");
     const memes = await Meme.find().sort({ createdAt: -1 });
+    console.log("Fetched memes:", memes);
     res.json(memes);
   } catch (error) {
     console.error("Error fetching memes:", error);
@@ -46,11 +56,18 @@ router.get("/", async (req, res) => {
 router.post("/", auth, upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
+      console.log("No file uploaded in request.");
       return res.status(400).json({ message: "No file uploaded" });
     }
 
     const { title } = req.body;
     const imageUrl = `/uploads/${req.file.filename}`;
+    console.log(
+      "Uploading meme with title:",
+      title,
+      "and image URL:",
+      imageUrl
+    );
 
     const meme = new Meme({
       title,
@@ -60,6 +77,7 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
     });
 
     await meme.save();
+    console.log("Meme uploaded successfully:", meme);
     res.status(201).json(meme);
   } catch (error) {
     console.error("Error uploading meme:", error);
@@ -72,15 +90,15 @@ router.post("/", auth, upload.single("image"), async (req, res) => {
 // Random meme route
 router.get("/random", async (req, res) => {
   try {
-    // Fetch a random meme by skipping a random number of records and limiting to 1 result
+    console.log("Fetching random meme...");
     const randomMeme = await Meme.aggregate([{ $sample: { size: 1 } }]);
 
-    // If there is no meme found
     if (randomMeme.length === 0) {
+      console.log("No memes found.");
       return res.status(404).json({ message: "No memes found" });
     }
 
-    // Send the random meme as the response
+    console.log("Fetched random meme:", randomMeme[0]);
     res.json(randomMeme[0]);
   } catch (error) {
     console.error("Error fetching random meme:", error);
@@ -92,8 +110,10 @@ router.get("/random", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
+    console.log("Fetching meme by ID:", req.params.id);
     const meme = await Meme.findById(req.params.id);
     if (!meme) {
+      console.log("Meme not found for ID:", req.params.id);
       return res.status(404).json({ message: "Meme not found" });
     }
     res.json(meme);

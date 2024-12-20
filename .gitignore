@@ -130,4 +130,6 @@ dist
 .pnp.*
 
 # Mine
-uploads
+/database/
+/uploads/
+

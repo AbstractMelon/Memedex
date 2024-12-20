@@ -23,18 +23,18 @@ app.use("/api/memes", memeRoutes);
 
 // Serve static files for production (after build)
 if (process.env.NODE_ENV === "production") {
-  // Serve static files from the dist folder
+  console.log("Serving static files from production folder...");
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  // For any routes that are not API routes, send the index.html from the dist folder
   app.get("*", (req, res) => {
+    console.log("Serving index.html for route:", req.originalUrl);
     res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
   });
 }
 
 // Error handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Error stack:", err.stack);
   res.status(500).json({ message: "Something went wrong!" });
 });
 
