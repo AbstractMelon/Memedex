@@ -7,11 +7,15 @@ const auth = require("../middleware/auth");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    const uploadPath = "uploads/";
+    if (!fs.existsSync(uploadPath)) {
+      console.error(`Directory does not exist: ${uploadPath}`);
+    }
     console.log(
       "Setting file destination to 'uploads/' for file:",
       file.originalname
     );
-    cb(null, "uploads/");
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     const filename = Date.now() + path.extname(file.originalname);

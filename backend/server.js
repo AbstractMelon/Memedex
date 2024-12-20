@@ -1,11 +1,20 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const fs = require("fs");
 const path = require("path");
 const userRoutes = require("./controllers/userController");
 const memeRoutes = require("./controllers/memeController");
 
 const app = express();
+
+// Make dir
+const uploadDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("Uploads directory created.");
+}
 
 // Middleware
 app.use(express.json());
