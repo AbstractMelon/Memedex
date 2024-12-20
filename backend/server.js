@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
 const path = require("path");
 const userRoutes = require("./controllers/userController");
 const memeRoutes = require("./controllers/memeController");
@@ -9,7 +8,6 @@ const memeRoutes = require("./controllers/memeController");
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
@@ -22,6 +20,17 @@ mongoose
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/memes", memeRoutes);
+
+// Serve static files for production (after build)
+if (process.env.NODE_ENV === "production") {
+  // Serve static files from the dist folder
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  // For any routes that are not API routes, send the index.html from the dist folder
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
+  });
+}
 
 // Error handling
 app.use((err, req, res, next) => {
