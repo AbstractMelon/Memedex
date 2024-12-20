@@ -1,2 +1,3 @@
-# Meemdex
+# Memedex
+
 Meme database!
