@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const Meme = require("../models/Meme");
 const auth = require("../middleware/auth");
+const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
