@@ -1,0 +1,20 @@
+{
+  "name": "memedex",
+  "version": "1.0.0",
+  "description": "Meme database!",
+  "bugs": {
+    "url": "https://github.com/AbstractMelon/Meemdex/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbstractMelon/Meemdex.git"
+  },
+  "scripts": {
+    "dev": "concurrently \"cd frontend && pnpm run dev\" \"cd backend && pnpm run dev\"",
+    "prod": "cd frontend && pnpm run build && cd ../backend && pnpm run prod",
+    "testing": "cd backend && pnpm run testing"
+  },
+  "devDependencies": {
+    "concurrently": "^7.5.0"
+  }
+}
